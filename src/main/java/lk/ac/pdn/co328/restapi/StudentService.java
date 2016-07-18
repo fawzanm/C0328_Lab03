@@ -10,13 +10,22 @@ import org.jboss.resteasy.util.HttpResponseCodes;
 public class StudentService {
     StudentRegister register_ = new StudentRegister();
 
+    //localhost:8080/rest/student/1
     @GET
     @Path("student/{id}")
-    // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-        register_.findStudent(id);
-        Student st = new Student(id, "dummy", "dummy");
+        Student st;
+        try {
+            st = register_.findStudent(id);
+        }catch (Exception e){
+            e.printStackTrace();
+            return Response.status(HttpResponseCodes.SC_FOUND).entity(e.getMessage()).build();
+        }
+
+        if(st == null){
+            return Response.status(HttpResponseCodes.SC_FOUND).entity("ID "+id+"  is not valid.").build();
+        }
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
     
@@ -40,31 +49,36 @@ public class StudentService {
         //return Response.status(HttpResponseCodes.SC_OK).entity(st).build();
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
-    
+
+    //localhost:8080/rest/student/1
     @DELETE
     @Path("student/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteStudent(@PathParam("id") int id) {
-        String message;
-        try{
-            register_.removeStudent(id);
-            message = "{message:'FIXME : Deleted'}";
-        }catch(Exception e){
-            message = "{message:'FIXME : Error'}";
-            e.printStackTrace();
+
+        Student st;
+        st = register_.findStudent(id);
+
+        if(st == null){
+            return Response.status(HttpResponseCodes.SC_FOUND).entity("ID "+id+" is not valid.").build();
+        }else{
+            try {
+                register_.removeStudent(id);
+                return Response.status(HttpResponseCodes.SC_OK).entity("ID  "+id+" is Deleted.").build();
+            }catch (Exception e){
+                e.printStackTrace();
+                return Response.status(HttpResponseCodes.SC_OK).entity(e.getMessage()).build();
+            }
         }
-        // Ideally this should be machine readable format Json or XML
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+
     }
 
 
-    //GET http://host.com/library/book;id="id";first="Name";last="Lastname"
+    //localhost:8080/rest/student/1;first=Amila;last=Indrajith
     @PUT
     @Path("student/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    //@Consumes("application/xml")
-    //public Response addStudent(@PathParam("id") int id, String input) {
      public Response addStudent(@PathParam("id") int id,@MatrixParam("first") String firstname, @MatrixParam("last") String lastname){
         Student st = null;
         try {
@@ -72,15 +86,10 @@ public class StudentService {
             register_.addStudent(st);
             return Response.status(HttpResponseCodes.SC_OK).entity("Created Student,ID : " + id + ", First Name : " + firstname + ", Last Name : " + lastname).build();
 
-
         }catch (Exception e){
             e.printStackTrace();
             return Response.status(HttpResponseCodes.SC_OK).entity(e.getMessage()).build();
         }
-        // Ideally this should be machine readable format Json or XML
-        //message = "{message:'FIXME : Added'}";
-        //return Response.status(HttpResponseCodes.SC_OK).entity(st).build();
-        //return Response.status(200).entity("Created'/n ID : " + id + ", First Name : " + firstname + ", Last Name : " + lastname).build();
     }
 }
 
