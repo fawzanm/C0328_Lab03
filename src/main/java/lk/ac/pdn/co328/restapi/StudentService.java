@@ -1,8 +1,3 @@
-/*
- * CO328 Lab3 web services excercise
- * Author - Himesh Karunarathna
- */
-
 package lk.ac.pdn.co328.restapi;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -58,17 +53,30 @@ public class StudentService {
             message = "{message:'FIXME : Error'}";
             e.printStackTrace();
         }
-
-          // Ideally this should be machine readable format Json or XML
+        // Ideally this should be machine readable format Json or XML
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
-    
+
+
+    //GET http://host.com/library/book;id="id";first="Name";last="Lastname"
     @PUT
     @Path("student/{id}")
-    @Consumes("application/xml")
-    public Response addStudent(@PathParam("id") int id, String input)
-    {
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    //@Consumes("application/xml")
+    //public Response addStudent(@PathParam("id") int id, String input) {
+     public Response addStudent(@MatrixParam("id") int id,@MatrixParam("first") String firstname, @MatrixParam("last") String lastname){
+        Student st = null;
+        String message;
+        try {
+            st = new Student(id,firstname,lastname) ;
+            register_.addStudent(st);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+          // Ideally this should be machine readable format Json or XML
+        message = "{message:'FIXME : Added'}";
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 }
