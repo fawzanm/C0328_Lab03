@@ -65,19 +65,22 @@ public class StudentService {
     @Consumes(MediaType.APPLICATION_JSON)
     //@Consumes("application/xml")
     //public Response addStudent(@PathParam("id") int id, String input) {
-     public Response addStudent(@MatrixParam("id") int id,@MatrixParam("first") String firstname, @MatrixParam("last") String lastname){
+     public Response addStudent(@PathParam("id") int id,@MatrixParam("first") String firstname, @MatrixParam("last") String lastname){
         Student st = null;
-        String message;
         try {
             st = new Student(id,firstname,lastname) ;
             register_.addStudent(st);
+            return Response.status(HttpResponseCodes.SC_OK).entity("Created Student,ID : " + id + ", First Name : " + firstname + ", Last Name : " + lastname).build();
+
 
         }catch (Exception e){
             e.printStackTrace();
+            return Response.status(HttpResponseCodes.SC_OK).entity(e.getMessage()).build();
         }
-          // Ideally this should be machine readable format Json or XML
-        message = "{message:'FIXME : Added'}";
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        // Ideally this should be machine readable format Json or XML
+        //message = "{message:'FIXME : Added'}";
+        //return Response.status(HttpResponseCodes.SC_OK).entity(st).build();
+        //return Response.status(200).entity("Created'/n ID : " + id + ", First Name : " + firstname + ", Last Name : " + lastname).build();
     }
 }
 
