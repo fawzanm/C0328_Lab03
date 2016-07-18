@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.core.Application;
  
-public class StudentApplication extends Application
-{
+public class StudentApplication extends Application {
+
     private final Set<Object> singletons = new HashSet();
     private final Set<Class<?>> empty = new HashSet();
  
