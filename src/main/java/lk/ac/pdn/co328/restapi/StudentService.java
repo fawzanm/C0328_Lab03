@@ -38,8 +38,28 @@ public class StudentService
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        if(register.findStudent(id) == null)
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"No such student. Use PUT to add student..\"").build();
+
+        //request format required :
+        //firstname = <first name>, lastname = <last name>
+
+        input = input.replaceAll("\\s+","");
+        String[] data = input.split(",");
+        if(data.length != 2)
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request body format not recognized. usage: firstname = <first name>, lastname = <last name>\"").build();
+
+        data[0] = data[0].replace("firstname=","");
+        data[1] = data[1].replace("lastname=","");
+
+        if(data[0].contains("=") || data[1].contains("="))
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request body format not recognized. usage: firstname = <first name>, lastname = <last name>\"").build();
+
+        Student st = register.findStudent(id);
+        st.setFirstName(data[0]);
+        st.setLastName(data[1]);
+
+        return Response.status(HttpResponseCodes.SC_OK).entity("\"Student modified successfully!\"").build();
     }
 
     @DELETE
@@ -55,6 +75,7 @@ public class StudentService
 
     @PUT
     @Path("student/{id}")
+    @Produces ("application/json")
     @Consumes("application/xml")
     public Response addStudent(@PathParam("id") int id, String input)
     {
@@ -64,13 +85,13 @@ public class StudentService
         input = input.replaceAll("\\s+","");
         String[] data = input.split(",");
         if(data.length != 2)
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request format not recognized. usage: firstname = <first name>, lastname = <last name>\"").build();
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request body format not recognized. usage: firstname = <first name>, lastname = <last name>\"").build();
 
         data[0] = data[0].replace("firstname=","");
         data[1] = data[1].replace("lastname=","");
 
         if(data[0].contains("=") || data[1].contains("="))
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request format not recognized. usage: firstname = <first name>, lastname = <last name>\"").build();
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request body format not recognized. usage: firstname = <first name>, lastname = <last name>\"").build();
 
         try
         {
