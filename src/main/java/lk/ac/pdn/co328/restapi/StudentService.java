@@ -30,7 +30,14 @@ public class StudentService
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        Student st = studentlist.findStudent(id);
+        String message;
+        if(st!=null){
+            st.setFirstName(input);
+            message = "{message:'Updated student successfully'}";
+        }else{
+            message = "{message:'Enter valid student ID'}";  // Ideally this should be machine readable format Json or XML
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
