@@ -18,10 +18,10 @@ public class StudentService{
   }
     @GET
     @Path("student/{id}")
-    // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-        Student st = new Student(id, "dummy", "dummy");
+        Student st = register.findStudent(id);
+        if (st==null) return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(st).build();
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
     
