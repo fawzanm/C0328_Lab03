@@ -15,6 +15,10 @@ public class Student
         this.firstName = firstName;
         this.lastName = lastName;
     }
+    public void UpdateStudent(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
 
     public Student() {
     }
@@ -46,8 +50,5 @@ public class Student
         this.lastName = lastName;
     }
 
-    @XmlElement
-    public String getSomeGet(){
-        return "A";
-    }
+
 }
