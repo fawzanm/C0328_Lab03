@@ -23,12 +23,7 @@ public class StudentService
     // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON)
     public Response viewStudent(@PathParam("id") int id) {
-        Student st =  new Student(1, "diummy","dummy");
-        try {
-            register.addStudent(st);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Student st ;
 
         synchronized (register){
             st = register.findStudent(id);
