@@ -46,8 +46,5 @@ public class Student
         this.lastName = lastName;
     }
 
-    @XmlElement
-    public String getSomeGet(){
-        return "A";
-    }
+
 }
