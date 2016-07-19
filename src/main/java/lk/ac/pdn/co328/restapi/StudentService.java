@@ -82,7 +82,7 @@ public class StudentService{
         }
     }
     
-     @PUT
+    @PUT
     @Path("student/{id}")
     @Produces("text/html")
     @Consumes("application/xml")
