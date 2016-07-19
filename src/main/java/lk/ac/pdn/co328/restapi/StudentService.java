@@ -50,6 +50,15 @@ public class StudentService
     @Path("student/{id}")
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input) throws Exception {
+        /*  The message format is
+        *   <student>
+        *       <firstName>Hello</firstName>
+        *       <lastName>World</lastName>
+        *   </student>
+        *
+        *   and should select raw and content-type as application/xml
+        * */
+
         String message;
 
         if (stReg.findStudent(id) != null && stReg.findStudent(id).getId() > 0) {
@@ -88,6 +97,15 @@ public class StudentService
     @Path("student/{id}")
     @Consumes("application/xml")
     public Response addStudent(@PathParam("id") int id, String input) throws Exception {
+        /*  The message format is
+        *   <student>
+        *       <firstName>Hello</firstName>
+        *       <lastName>World</lastName>
+        *   </student>
+        *
+        *   and should select raw and content-type as application/xml
+        * */
+
         String message;
 
         if (stReg.findStudent(id) != null && stReg.findStudent(id).getId() > 0) {
