@@ -30,7 +30,40 @@ public class StudentService{
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        /*
+        Body of expected POST request should be of following format.
+        <?xml version="1.0" encoding="UTF-8"?>
+        <student><firstName>miley</firstName>
+        <id>11</id>
+        <lastName>cyrus</lastName>
+        </student>
+        */
+        String message = null;
+        String [] data;
+        String [] data2;
+        try {
+            String sid = "";
+            String fname = "";
+            String lname = "";
+
+            data = input.split("<");
+
+            data2 = data[3].split(">");
+            fname = data2[1];
+
+            data2 = data[5].split(">");
+            sid = data2[1];
+
+            data2 = data[7].split(">");
+            lname = data2[1];
+
+            register.removeStudent(Integer.parseInt(sid));
+            Student news = new Student(Integer.parseInt(sid), fname, lname);
+            register.addStudent(news);
+            message = "Details od student with id " + sid + " was successfully modified. ";
+        }catch(Exception e){
+            message = "Modification failed.";
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
