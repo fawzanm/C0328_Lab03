@@ -11,8 +11,11 @@ import lk.ac.pdn.co328.studentSystem.Student;
 import org.jboss.resteasy.util.HttpResponseCodes;
  
 @Path("rest")
-public class StudentService
-{    
+public class StudentService{ 
+ private StudentRegister register = null;
+  public StudentService(){
+   register = new StudentRegister() ;
+  }
     @GET
     @Path("student/{id}")
     // Uncommenting this will let the reciver know that you are sending a json
