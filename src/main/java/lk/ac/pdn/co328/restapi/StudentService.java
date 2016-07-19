@@ -31,22 +31,21 @@ public class StudentService {
     
     @POST
     @Path("student/{id}")
-    //@Consumes("application/xml")
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    //@Produces({ MediaType.APPLICATION_FORM_URLENCODED })
+
+    @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    //public Response modifyStudent(@PathParam("id") int id,@MatrixParam("first") String firstname, @MatrixParam("last") String lastname){
-    public Response modifyStudent(@PathParam("id") int id,String input){
+    public Response modifyStudent(@PathParam("id") int id,@MatrixParam("first") String firstname, @MatrixParam("last") String lastname){
         Student st = null;
         try {
-            //st = new Student(id,firstname, lastname) ;
+            register_.removeStudent(id);
+            st = new Student(id,firstname, lastname) ;
             register_.addStudent(st);
         } catch (Exception e) {
             e.printStackTrace();
+            return Response.status(HttpResponseCodes.SC_OK).entity(e.getMessage()).build();
         }
 
         String message = "{message:'FIXME : Updated'}";  // Ideally this should be machine readable format Json or XML
-        //return Response.status(HttpResponseCodes.SC_OK).entity(st).build();
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 
