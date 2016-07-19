@@ -11,14 +11,17 @@ import lk.ac.pdn.co328.studentSystem.Student;
 import org.jboss.resteasy.util.HttpResponseCodes;
  
 @Path("rest")
-public class StudentService
-{    
+public class StudentService{ 
+ private StudentRegister register = null;
+  public StudentService(){
+   register = new StudentRegister() ;
+  }
     @GET
     @Path("student/{id}")
-    // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-        Student st = new Student(id, "dummy", "dummy");
+        Student st = register.findStudent(id);
+        if (st==null) return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(st).build();
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
     
@@ -27,7 +30,40 @@ public class StudentService
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        /*
+        Body of expected POST request should be of following format.
+        <?xml version="1.0" encoding="UTF-8"?>
+        <student><firstName>miley</firstName>
+        <id>11</id>
+        <lastName>cyrus</lastName>
+        </student>
+        */
+        String message = null;
+        String [] data;
+        String [] data2;
+        try {
+            String sid = "";
+            String fname = "";
+            String lname = "";
+
+            data = input.split("<");
+
+            data2 = data[3].split(">");
+            fname = data2[1];
+
+            data2 = data[5].split(">");
+            sid = data2[1];
+
+            data2 = data[7].split(">");
+            lname = data2[1];
+
+            register.removeStudent(Integer.parseInt(sid));
+            Student news = new Student(Integer.parseInt(sid), fname, lname);
+            register.addStudent(news);
+            message = "Details od student with id " + sid + " was successfully modified. ";
+        }catch(Exception e){
+            message = "Modification failed.";
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
@@ -35,16 +71,56 @@ public class StudentService
     @Path("student/{id}")
     public Response deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        String message = null;
+        try{
+            register.removeStudent(id);
+            message = "Student with id "+id+" was successfully deleted.";
+            return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        } catch (Exception ex){
+            message = "Failed to delete student with id "+id+".";
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
+        }
     }
     
     @PUT
     @Path("student/{id}")
+    @Produces("text/html")
     @Consumes("application/xml")
     public Response addStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        /*
+        Body of expected PUT request should be of following format.
+        <?xml version="1.0" encoding="UTF-8"?>
+        <student><firstName>miley</firstName>
+        <id>11</id>
+        <lastName>cyrus</lastName>
+        </student>
+        */
+        String message = null;
+        String [] data;
+        String [] data2;
+        try {
+            String sid = "";
+            String fname = "";
+            String lname = "";
+
+            data = input.split("<");
+
+            data2 = data[3].split(">");
+            fname = data2[1];
+
+            data2 = data[5].split(">");
+            sid = data2[1];
+
+            data2 = data[7].split(">");
+            lname = data2[1];
+
+            Student news = new Student(Integer.parseInt(sid),fname,lname);
+            register.addStudent(news);
+            message = "Student with id "+sid+" was successfully added. ";
+        }catch(Exception e){
+            message = "Failed to add the student.";
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 }
