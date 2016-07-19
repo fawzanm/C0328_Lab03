@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="3" failures="0" name="lk.ac.pdn.co328.studentSystem.StudentRegisterTest" time="0.057" errors="0" skipped="0">
+<testsuite tests="3" failures="0" name="lk.ac.pdn.co328.studentSystem.StudentRegisterTest" time="0.066" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2016.1"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -11,7 +11,7 @@
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
     <property name="file.encoding.pkg" value="sun.io"/>
-    <property name="idea.launcher.port" value="7537"/>
+    <property name="idea.launcher.port" value="7536"/>
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="unknown"/>
@@ -62,7 +62,7 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="lk.ac.pdn.co328.studentSystem.StudentRegisterTest" name="testAddStudent" time="0.002"/>
+  <testcase classname="lk.ac.pdn.co328.studentSystem.StudentRegisterTest" name="testAddStudent" time="0.003"/>
   <testcase classname="lk.ac.pdn.co328.studentSystem.StudentRegisterTest" name="testRemoveStudent" time="0"/>
   <testcase classname="lk.ac.pdn.co328.studentSystem.StudentRegisterTest" name="testGetRegNumbers" time="0"/>
 </testsuite>

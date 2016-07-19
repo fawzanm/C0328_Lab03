@@ -39,16 +39,47 @@ public class StudentService
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        //String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML
+        //return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+
+        student = studentRegister.findStudent(id);
+
+        if(student== null){
+            return Response.status(HttpResponseCodes.SC_OK).entity("\"There is no such student to modify.\" ").build();
+        }else {
+            String[] tokens = input.split(",");
+            if (tokens.length != 2) {
+                return Response.status(HttpResponseCodes.SC_OK).entity("\"Request format is wrong.usage: first_name:<first name>,last_name:<last name>\" ").build();
+            }
+
+            tokens[0] = tokens[0].replace("first_name:", "");
+            tokens[1] = tokens[1].replace("last_name:", "");
+
+            student.setFirstName(tokens[0]);
+            student.setLastName(tokens[1]);
+
+            return Response.status(HttpResponseCodes.SC_OK).entity("\"Student modified successfully.\" ").build();
+
+        }
     }
     
     @DELETE
     @Path("student/{id}")
     public Response deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        //String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML
+        //return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        student = studentRegister.findStudent(id);
+        if(student== null) {
+            return Response.status(HttpResponseCodes.SC_OK).entity("\"There is no such student to delete.\" ").build();
+        }else{
+            studentRegister.removeStudent(student.getId());
+            if(studentRegister.findStudent(student.getId())==null){
+                return Response.status(HttpResponseCodes.SC_OK).entity("\"Student successfully deleted.\" ").build();
+            }else{
+                return Response.status(HttpResponseCodes.SC_OK).entity("\"Student not successfully deleted.\" ").build();
+            }
+        }
     }
     
     @PUT
