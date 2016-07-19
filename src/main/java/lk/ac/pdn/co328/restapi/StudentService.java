@@ -82,12 +82,45 @@ public class StudentService{
         }
     }
     
-    @PUT
+     @PUT
     @Path("student/{id}")
+    @Produces("text/html")
     @Consumes("application/xml")
     public Response addStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        /*
+        Body of expected PUT request should be of following format.
+        <?xml version="1.0" encoding="UTF-8"?>
+        <student><firstName>miley</firstName>
+        <id>11</id>
+        <lastName>cyrus</lastName>
+        </student>
+        */
+        String message = null;
+        String [] data;
+        String [] data2;
+        try {
+            String sid = "";
+            String fname = "";
+            String lname = "";
+
+            data = input.split("<");
+
+            data2 = data[3].split(">");
+            fname = data2[1];
+
+            data2 = data[5].split(">");
+            sid = data2[1];
+
+            data2 = data[7].split(">");
+            lname = data2[1];
+
+            Student news = new Student(Integer.parseInt(sid),fname,lname);
+            register.addStudent(news);
+            message = "Student with id "+sid+" was successfully added. ";
+        }catch(Exception e){
+            message = "Failed to add the student.";
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 }
