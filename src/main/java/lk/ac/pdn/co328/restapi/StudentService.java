@@ -15,55 +15,86 @@ import javax.ws.rs.core.Response;
 @Path("rest")
 public class StudentService
 {
-    StudentRegister register;
+    private static StudentRegister register = new StudentRegister();
 
     @GET
     @Path("student/{id}")
     // Uncommenting this will let the reciver know that you are sending a json
-    @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
+    @Produces( MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-        //Student st = new Student(id, "dummy", "dummy");
-         register =new StudentRegister();
-        Student st;// =new Student();
+        Student st;
         st = register.findStudent(id);
+
+        if(st == null){
+            System.out.print("fwvefuwbeub\n");
+            String message = id + " is not valid Reg No. Please enter valid number !!!";
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
+        }
 
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
     
     @POST
     @Path("student/{id}")
-    @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
-    @Consumes("application/xml")
-    public Response modifyStudent(@PathParam("id") int id, String input)
+    @Consumes(MediaType.APPLICATION_XML)
+    @Produces( MediaType.APPLICATION_XML )
+    public Response modifyStudent(@PathParam("id") int id, Student input)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        String message;
+
+        synchronized (register) {
+            try {
+                /**post update the state of the student
+                 * so,first remove the student and add the updated student
+                 * **/
+                register.removeStudent(id);
+                register.addStudent(input);
+                message = "Updated details of student successfully !!!";
+            } catch (Exception e) {
+               message = e.getMessage();
+                return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+            }
+        }
+         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
     @DELETE
     @Path("student/{id}")
+    @Produces(MediaType.APPLICATION_XML)
     public Response deleteStudent(@PathParam("id") int id)
     {
-        register = new StudentRegister();
-        register.removeStudent(id);
-        String message = "{message:'FIXed : Delete service is implemented'}";  // Ideally this should be machine readable format Json or XML
+        String message;
+
+        synchronized (register){
+            try{
+                register.removeStudent(id);
+                message = new String("Student has removed !! ");
+            }catch (Exception e){
+                message = e.getMessage();
+                return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+            }
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
     @PUT
-    //@Path("student/{id}")
-    @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
-    @Consumes("application/xml,application/json")
-    public Response addStudent(@PathParam("id") int id, String input) throws Exception
+    @Path("student/{id}")
+    @Produces(  MediaType.APPLICATION_XML )
+    @Consumes( MediaType.APPLICATION_XML)
+    public Response addStudent(@PathParam("id") int id, Student input) throws Exception
     {
-    System.out.print("wfdyaweygfawifhuirah");
-        register = new StudentRegister();
-        Student st1 = new Student(id, "sadasd", "dummy");
+        String message;
 
-        register.addStudent(st1);
-
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        synchronized (register){
+            try{
+                register.addStudent(input);
+                message = "Add student successfully !!!";
+            }catch (Exception e){
+                message = e.getMessage();
+                return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+            }
+        }
+         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 }
 
