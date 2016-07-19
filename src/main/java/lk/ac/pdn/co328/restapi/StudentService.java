@@ -71,8 +71,15 @@ public class StudentService{
     @Path("student/{id}")
     public Response deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        String message = null;
+        try{
+            register.removeStudent(id);
+            message = "Student with id "+id+" was successfully deleted.";
+            return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        } catch (Exception ex){
+            message = "Failed to delete student with id "+id+".";
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
+        }
     }
     
     @PUT
