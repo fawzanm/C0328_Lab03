@@ -33,12 +33,22 @@ public class StudentService
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input)
     {
-        Student st1 = newReg.findStudent(id);
-        if(st1 == null){
-            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity("Student not found").build();
+        Student st = newReg.findStudent(id);
+        if(st == null){
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity("ID is invalid").build();
         }
-
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        newReg.removeStudent(id);
+        String message = null;
+        try{
+            String stu[] = input.split(" ");
+            st = new Student(id, stu[0], stu[1]);
+            newReg.addStudent(st);
+            message = "Student added successfully";
+        }
+        catch (Exception e){
+            message = e.toString();
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
