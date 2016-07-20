@@ -27,7 +27,7 @@ public class StudentService
         }
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
-    
+
     @POST
     @Path("student/{id}")
     @Consumes("application/xml")
@@ -41,8 +41,8 @@ public class StudentService
         String message = null;
         try{
             String stu[] = input.split(" ");
-            st = new Student(id, stu[0], stu[1]);
-            newReg.addStudent(st);
+            Student stnew = new Student(id, stu[0], stu[1]);
+            newReg.addStudent(stnew);
             message = "Student added successfully";
         }
         catch (Exception e){
@@ -51,21 +51,42 @@ public class StudentService
         }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
-    
+
     @DELETE
     @Path("student/{id}")
     public Response deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        Student st = newReg.findStudent(id);
+        if(st == null){
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity("ID is invalid").build();
+        }
+        newReg.removeStudent(id);
+
+        return Response.status(HttpResponseCodes.SC_OK).entity("Delete Success").build();
     }
-    
+
     @PUT
     @Path("student/{id}")
     @Consumes("application/xml")
     public Response addStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        Student st = newReg.findStudent(id);
+        String message = null;
+        if(st == null) {
+            try {
+                String stu[] = input.split(" ");
+                Student st1 = new Student(id, stu[0], stu[1]);
+                newReg.addStudent(st1);
+                message = "Student added successfully";
+            } catch (Exception e) {
+                message = e.toString();
+                return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+            }
+        }
+        else{
+            message = "Student ID already exists";
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 }
