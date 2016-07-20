@@ -8,17 +8,23 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import lk.ac.pdn.co328.studentSystem.Student;
+import lk.ac.pdn.co328.studentSystem.StudentRegister;
 import org.jboss.resteasy.util.HttpResponseCodes;
  
 @Path("rest")
 public class StudentService
-{    
+{
+    StudentRegister newReg = new StudentRegister();
+
     @GET
     @Path("student/{id}")
     // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-        Student st = new Student(id, "dummy", "dummy");
+        Student st = newReg.findStudent(id);
+        if(st == null){
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity("ID is invalid").build();
+        }
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
     
@@ -27,6 +33,11 @@ public class StudentService
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input)
     {
+        Student st1 = newReg.findStudent(id);
+        if(st1 == null){
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity("Student not found").build();
+        }
+
         String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
