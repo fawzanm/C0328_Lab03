@@ -6,46 +6,59 @@
 package lk.ac.pdn.co328.restapi;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import lk.ac.pdn.co328.studentSystem.Student;
-import org.jboss.resteasy.util.HttpResponseCodes;
+import lk.ac.pdn.co328.studentSystem.StudentRegister;
  
 @Path("rest")
 public class StudentService
 {    
+    StudentRegister register = new StudentRegister();
+    private static final String SUCCESS_RESULT="<result>success</result>";
+    private static final String FAILURE_RESULT="<result>failure</result>";
+    
     @GET
     @Path("student/{id}")
     // Uncommenting this will let the reciver know that you are sending a json
-    @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
-    public Response viewStudent(@PathParam("id") int id) {
-        Student st = new Student(id, "dummy", "dummy");
-        return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
+    @Produces(MediaType.APPLICATION_XML)
+    public Student viewStudent(@PathParam("id") int id) {
+        return register.findStudent(id);
     }
     
     @POST
-    @Path("student/{id}")
-    @Consumes("application/xml")
-    public Response modifyStudent(@PathParam("id") int id, String input)
+    @Path("student/{id}-{firstname}-{lastname}")
+    @Produces(MediaType.APPLICATION_XML)
+    public String modifyStudent(@PathParam("id") int id, @PathParam("firstname") String firstname, @PathParam("lastname") String lastname)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        register.removeStudent(id);
+        Student student = new Student(id, firstname, lastname);
+        try {
+            register.addStudent(student);
+        } catch (Exception ex) {
+            return FAILURE_RESULT;
+        }
+        return SUCCESS_RESULT;
     }
     
     @DELETE
     @Path("student/{id}")
-    public Response deleteStudent(@PathParam("id") int id)
+    public String deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        register.removeStudent(id);
+        return SUCCESS_RESULT;
     }
     
     @PUT
-    @Path("student/{id}")
-    @Consumes("application/xml")
-    public Response addStudent(@PathParam("id") int id, String input)
+    @Path("student/{id}-{firstname}-{lastname}")
+    @Produces(MediaType.APPLICATION_XML)
+    public String addStudent(@PathParam("id") int id, @PathParam("firstname") String firstname, @PathParam("lastname") String lastname)
     {
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        Student student = new Student(id, firstname, lastname);
+        try {
+            register.addStudent(student);
+        } catch (Exception ex) {
+            return FAILURE_RESULT;
+        }
+        return SUCCESS_RESULT;
     }
 }
 
