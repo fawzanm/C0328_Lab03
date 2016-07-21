@@ -18,12 +18,12 @@ public class StudentService
     @GET
     @Path("student/{id}")
     //Uncommenting this will let the reciver know that you are sending a json
-    @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
+    @Produces(MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
         String message;
         Student student = studentRegister.findStudent(id);
         if(student == null){
-            message = "The ID " + id + " is not valid";
+            message = "The ID " + id + " is not found";
             return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
         }else{
             return Response.status(HttpResponseCodes.SC_FOUND).entity(student).build();
@@ -78,20 +78,14 @@ public class StudentService
         String message;
         // Ideally this should be machine readable format Json or XML
         Student isStudent = studentRegister.findStudent(id);
-        if(isStudent==null){
-            synchronized (studentRegister) {
-                try {
-                    studentRegister.addStudent(student);
-                    message = "Student added Successfully";
-                } catch (Exception e) {
-                    message = e.toString();
-                    return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
-                }
+        synchronized (studentRegister) {
+            try {
+                studentRegister.addStudent(student);
+                message = "Student added Successfully";
+            } catch (Exception e) {
+                message = e.toString();
+                return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
             }
-        }
-        else{
-            message = "The ID you have entered is already there. Please check the ID.";
-            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
         }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
