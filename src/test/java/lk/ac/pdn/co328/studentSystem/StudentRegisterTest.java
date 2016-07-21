@@ -1,6 +1,5 @@
 package lk.ac.pdn.co328.studentSystem;
 import org.junit.*;
-import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 
