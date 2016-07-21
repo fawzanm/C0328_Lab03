@@ -70,8 +70,13 @@ public class StudentService
     @Path("student/{id}")
     public Response deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        //String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML
+        //return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        if(register.findStudent(id) == null)
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(" \"No such student\"").build();
+        register.removeStudent(id);
+        return Response.status(HttpResponseCodes.SC_OK).entity("\"Successfully deleted the student\"").build();
+
     }
 
     @PUT
