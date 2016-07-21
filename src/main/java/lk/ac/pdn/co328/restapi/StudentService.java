@@ -8,14 +8,16 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import lk.ac.pdn.co328.studentSystem.Student;
+import lk.ac.pdn.co328.studentSystem.StudentRegister;
 import org.jboss.resteasy.util.HttpResponseCodes;
  
 @Path("rest")
 public class StudentService
-{    
+{
+    StudentRegister studentRegister = new StudentRegister();
     @GET
     @Path("student/{id}")
-    // Uncommenting this will let the reciver know that you are sending a json
+    //Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
         Student st = new Student(id, "dummy", "dummy");
