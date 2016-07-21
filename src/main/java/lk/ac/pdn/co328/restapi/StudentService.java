@@ -20,16 +20,37 @@ public class StudentService
     //Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-        Student st = new Student(id, "dummy", "dummy");
-        return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
+        String message;
+        Student student = studentRegister.findStudent(id);
+        if(student == null){
+            message = "The ID " + id + " is not valid";
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
+        }else{
+            return Response.status(HttpResponseCodes.SC_FOUND).entity(student).build();
+        }
+
     }
     
     @POST
     @Path("student/{id}")
     @Consumes("application/xml")
-    public Response modifyStudent(@PathParam("id") int id, String input)
+    public Response modifyStudent(@PathParam("id") int id, Student input)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        String message; // Ideally this should be machine readable format Json or XML
+        Student student = studentRegister.findStudent(id);
+        if(student==null){
+            message = "There is no student to update in the database";
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
+        }else synchronized (studentRegister) {
+            try {
+                studentRegister.removeStudent(id);
+                studentRegister.addStudent(input);
+                message = "Student updated Successfully";
+            } catch (Exception e) {
+                message = e.getMessage();
+                return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+            }
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
@@ -41,12 +62,10 @@ public class StudentService
         Student student = studentRegister.findStudent(id);
         if(student==null){
             message = "There is no student with this ID!";
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
-        }else{
-            synchronized (studentRegister) {
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
+        }else synchronized (studentRegister) {
                 studentRegister.removeStudent(id);
                 message = "Student with ID = " + id + " was removed from the database.";
-            }
         }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
@@ -72,7 +91,7 @@ public class StudentService
         }
         else{
             message = "The ID you have entered is already there. Please check the ID.";
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity(message).build();
         }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
