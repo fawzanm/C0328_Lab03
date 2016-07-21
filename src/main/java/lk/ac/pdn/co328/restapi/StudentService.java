@@ -14,28 +14,20 @@ import org.jboss.resteasy.util.HttpResponseCodes;
 @Path("rest")
 public class StudentService
 {
+    private StudentRegister register = new StudentRegister();
+    public StudentService() {
+    }
     @GET
     @Path("student/{id}")
     // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
-    public Response viewStudent(@PathParam("id") int id, String input, StudentRegister register) {
-        
-         if(register.findStudent(id) == null)
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"No such student.\"").build();
-        input = input.replaceAll("\\s+","");
-        String[] data = input.split(",");
-        if(data.length != 2)
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request body format not recognized.\"").build();
-
-        data[0] = data[0].replace("firstname=","");
-        data[1] = data[1].replace("lastname=","");
-
-        if(data[0].contains("=") || data[1].contains("="))
-            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request body format not recognized.\"").build();
-
+   // public Response viewStudent(@PathParam("id") int id, String input) {
+       // Student st = new Student(id, "dummy", "dummy");
+    public Response viewStudent(@PathParam("id") int id)
+    {
         Student st = register.findStudent(id);
-        st.setFirstName(data[0]);
-        st.setLastName(data[1]);
+        if(st == null)
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity("\"No such student!\"").build();
 
         return Response.status(HttpResponseCodes.SC_OK).entity("\"Student modified successfully!\"").build();
 
@@ -58,10 +50,8 @@ public class StudentService
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 
-
     @PUT
     @Path("student/{id}")
-    @Produces ("application/json")
     @Consumes("application/xml")
     public Response addStudent(@PathParam("id") int id, String input)
     {
