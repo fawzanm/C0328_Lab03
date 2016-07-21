@@ -37,16 +37,43 @@ public class StudentService
     @Path("student/{id}")
     public Response deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        String message;// Ideally this should be machine readable format Json or XML
+        Student student = studentRegister.findStudent(id);
+        if(student==null){
+            message = "There is no student with this ID!";
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+        }else{
+            synchronized (studentRegister) {
+                studentRegister.removeStudent(id);
+                message = "Student with ID = " + id + " was removed from the database.";
+            }
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
     @PUT
     @Path("student/{id}")
     @Consumes("application/xml")
-    public Response addStudent(@PathParam("id") int id, String input)
+    public Response addStudent(@PathParam("id") int id, Student student)
     {
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        String message;
+        // Ideally this should be machine readable format Json or XML
+        Student isStudent = studentRegister.findStudent(id);
+        if(isStudent==null){
+            synchronized (studentRegister) {
+                try {
+                    studentRegister.addStudent(student);
+                    message = "Student added Successfully";
+                } catch (Exception e) {
+                    message = e.toString();
+                    return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+                }
+            }
+        }
+        else{
+            message = "The ID you have entered is already there. Please check the ID.";
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+        }
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 }
