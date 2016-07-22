@@ -15,23 +15,24 @@ import javax.ws.rs.core.Response;
 @Path("rest")
 public class StudentService
 {
-    private static StudentRegister t = new StudentRegister();
-    //Student st_ = new Student(1,"thushani","nipunika");
+    private static StudentRegister register = new StudentRegister();
+
+    Student st_ = new Student(1,"thushani","nipunika");
 
     @GET
     @Path("student/{id}")
     // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-       /* try{
-            t.addStudent(st_);
+       try{
+            register.addStudent(st_);
         }catch (Exception e){
 
         }
-*/
-        Student st = t.findStudent(id);
+
+        Student st = register.findStudent(id);
         if(st == null){
-            return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Invalid ID.").build();
+            return Response.status(HttpResponseCodes.SC_FOUND).entity("Error."+id+ "id is not valid.").build();
         }
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
@@ -44,19 +45,19 @@ public class StudentService
     {
         if(input == null) {
             try {
-                t.addStudent(input);
+                register.addStudent(input);
             } catch (Exception e) {
                 e.printStackTrace();
-                return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Invalid ID.").build();
+                return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Cant added the student.").build();
             }
         }
         else{
-            t.removeStudent(id);
+            register.removeStudent(id);
             try {
-                t.addStudent(input);
+                register.addStudent(input);
             } catch (Exception e) {
                 e.printStackTrace();
-                return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Invalid ID.").build();
+                return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Student is modified.").build();
             }
         }
         String message = "{message:'FIXME : Updated'}";
@@ -67,13 +68,13 @@ public class StudentService
     @Path("student/{id}")
 
     public Response deleteStudent(@PathParam("id") int id) {
-        if ((t.findStudent(id) != (null))) {
+        if ((register.findStudent(id) != (null))) {
             try {
-                t.removeStudent(id);
+                register.removeStudent(id);
                 String message = "{message:'FIXME : Deleted'}";  // Ideally this should be machine readable format Json or XML
                 return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
             } catch (Exception e) {
-                return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Invalid ID.").build();
+                return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Student cant remove.").build();
             }
         }else {
             return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Invalid ID.").build();
@@ -87,16 +88,16 @@ public class StudentService
     public Response addStudent(@PathParam("id") int id, Student input) {
         if (input != (null)) {
             try {
-                t.addStudent(input);
+                register.addStudent(input);
                 String message = "{message:'FIXME : Added'}";  // Ideally this should be machine readable format Json or XML
                 return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
 
             } catch (Exception e) {
                 e.printStackTrace();
-                return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.").build();
+                return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Cant added the student.").build();
             }
         }else{
-            return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.").build();
+            return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Student is not valid").build();
         }
     }
 }
