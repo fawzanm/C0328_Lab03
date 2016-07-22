@@ -20,8 +20,12 @@ public class StudentService
     // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-        Student st = new Student(id, "dummy", "dummy");
+
+        Student st = sr.findStudent(id);
+        String message = "Student id " +id+" is not found";  // Ideally this should be machine readable format Json or XML
+        if(st==null) return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
+
     }
     
     @POST
@@ -29,8 +33,14 @@ public class StudentService
     @Consumes("application/xml")
     public Response modifyStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        Student st = sr.findStudent(id);
+        String message = "Student id " +id+" is not found";  // Ideally this should be machine readable format Json or XML
+        if(st==null) return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity(message).build();
+        String ary[]=input.split("\\s+");;
+        st.setFirstName(ary[0]);
+        st.setLastName(ary[1]);
+        return Response.status(HttpResponseCodes.SC_OK).entity("Student id "+ id + " is updated as First name = " +
+        ary[0]+" Last name= "+ary[1]+" .").build();
     }
     
     @DELETE
