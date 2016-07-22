@@ -32,7 +32,7 @@ public class StudentService
 
         Student st = register.findStudent(id);
         if(st == null){
-            return Response.status(HttpResponseCodes.SC_FOUND).entity("Error."+id+ "id is not valid.").build();
+            return Response.status(HttpResponseCodes.SC_FOUND).entity("Error.Id is not valid.").build();
         }
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
