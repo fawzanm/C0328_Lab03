@@ -69,17 +69,48 @@ public class StudentService
     @Path("student/{id}")
     public Response deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        //  String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML
+        //return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        if(register.findStudent(id) == null) {
+            return Response.status(HttpResponseCodes.SC_NOT_FOUND).entity("Error : Student not found").build();
+        }
+
+        register.removeStudent(id);
+        return Response.status(HttpResponseCodes.SC_OK).entity("\"Student is deleted!\"").build();
     }
-    
+
+
+
     @PUT
     @Path("student/{id}")
     @Consumes("application/xml")
     public Response addStudent(@PathParam("id") int id, String input)
     {
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
-        return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        //String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML
+        //return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
+        input = input.replaceAll("\\s+","");
+        String[] data = input.split(",");
+
+        if(data.length != 2)
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request format not recognized. usage: firstname = <first name>, lastname = <last name>\"").build();
+
+        data[0] = data[0].replace("firstname=","");
+        data[1] = data[1].replace("lastname=","");
+
+        if(data[0].contains("=") || data[1].contains("="))
+            return Response.status(HttpResponseCodes.SC_BAD_REQUEST).entity("\"Request format not recognized. usage: firstname = <first name>, lastname = <last name>\"").build();
+
+        try
+        {
+            register.addStudent(new Student(id, data[0], data[1]));
+        }
+        catch (Exception e)
+        {
+            return Response.status(HttpResponseCodes.SC_CONFLICT).entity("\"Student already exist! Use a different ID or use POST to modify..\"").build();
+        }
+
+        return Response.status(HttpResponseCodes.SC_OK).entity("\"Student is added \"").build();
+
     }
 }
 
