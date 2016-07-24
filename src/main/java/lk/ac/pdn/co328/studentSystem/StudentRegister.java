@@ -1,6 +1,8 @@
 package lk.ac.pdn.co328.studentSystem;
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+
 public class StudentRegister
 {
     private ArrayList<Student> studentList = new ArrayList<Student>();
@@ -42,10 +44,21 @@ public class StudentRegister
         return  null;
     }
 
+
+
+    //Checking the registry list is empty or not
+    public boolean isEmpty(){
+        if (studentList.isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     // Cleans all the data from the student register
     public void reset()
     {
-        studentList = null;
+        studentList.clear();
     }
 
     // Finds all the students that has the given name as a part of their name.
@@ -56,13 +69,13 @@ public class StudentRegister
         {
             if(studentList.get(i).getFirstName().contains(name))
             {
-                studentList.add(studentList.get(i));
+                students.add(studentList.get(i));
             }
-			
-			
+
+
             if(studentList.get(i).getLastName().contains(name))
             {
-                studentList.add(studentList.get(i));
+                students.add(studentList.get(i));
             }
         }
         return students;
