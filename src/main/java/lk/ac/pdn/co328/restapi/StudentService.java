@@ -8,26 +8,38 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import lk.ac.pdn.co328.studentSystem.Student;
+import lk.ac.pdn.co328.studentSystem.StudentRegister;
 import org.jboss.resteasy.util.HttpResponseCodes;
  
 @Path("rest")
 public class StudentService
-{    
+{
+    StudentRegister streg = new StudentRegister();
     @GET
     @Path("student/{id}")
     // Uncommenting this will let the reciver know that you are sending a json
     @Produces( MediaType.APPLICATION_JSON + "," + MediaType.APPLICATION_XML )
     public Response viewStudent(@PathParam("id") int id) {
-        Student st = new Student(id, "dummy", "dummy");
+        Student st = streg.findStudent(id);
         return Response.status(HttpResponseCodes.SC_FOUND).entity(st).build();
     }
     
     @POST
     @Path("student/{id}")
     @Consumes("application/xml")
-    public Response modifyStudent(@PathParam("id") int id, String input)
-    {
-        String message = "{message:'FIXME : Update service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+    public Response modifyStudent(@PathParam("id") int id, String input) {
+        String [] inputs = input.split("=");
+        Student st = new Student(id, inputs[1], "");
+        streg.removeStudent(id);
+        String message;
+        try {
+            streg.addStudent(st);
+            message = "{message:'Student data updated'}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            message = "{message:'Student is not in the database'}";
+        }
+          // Ideally this should be machine readable format Json or XML
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
@@ -35,16 +47,25 @@ public class StudentService
     @Path("student/{id}")
     public Response deleteStudent(@PathParam("id") int id)
     {
-        String message = "{message:'FIXME : Delete service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+        streg.removeStudent(id);
+        String message = "{message:'Student is removed'}";  // Ideally this should be machine readable format Json or XML
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
     
     @PUT
     @Path("student/{id}")
     @Consumes("application/xml")
-    public Response addStudent(@PathParam("id") int id, String input)
-    {
-        String message = "{message:'FIXME : Add service is not yet implemented'}";  // Ideally this should be machine readable format Json or XML 
+    public Response addStudent(@PathParam("id") int id, String input) {
+        String [] inputs = input.split("=");
+        Student st = new Student(id, inputs[1], "");
+        String message;
+        try {
+            streg.addStudent(st);
+            message = "{message:'Student "+ input +" is added'}";
+        } catch (Exception e) {
+            message = "{message:'Student "+ input +" is already in the system'}";
+        }
+          // Ideally this should be machine readable format Json or XML
         return Response.status(HttpResponseCodes.SC_OK).entity(message).build();
     }
 }
